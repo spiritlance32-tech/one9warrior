@@ -140,7 +140,7 @@ if not df.empty:
             is_active = row['expiry_date'] >= today
             status = "🟢" if is_active else "🔴"
 
-            with st.expander(f"{status} {row['full_name']} | Exp: {row['expiry_date'].strftime('%d %b')}"):
+            with st.expander(f"{status} {row['full_name']} | Exp: {row['expiry_date'].strftime('%d %b %Y')}", expanded=False    ):
                 st.write(f"**Phone:** {row['phone']}")
 
                 if not is_active:
