@@ -1,0 +1,32 @@
+name: Supabase Backup
+
+on:
+  schedule:
+    - cron: "0 0 */5 * *"   # every 5 days
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create backups folder
+        run: mkdir -p backups
+
+      - name: Fetch members table
+        run: |
+          curl "https://pposuldiwswqqjkndydb.supabase.co/rest/v1/members" \
+          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -o backups/members-$(date +%F).json
+
+      - name: Commit backup
+        run: |
+          git config --global user.name "backup-bot"
+          git config --global user.email "bot@backup.com"
+          git add backups/
+          git commit -m "Backup: $(date)" || echo "No changes"
+          git push
